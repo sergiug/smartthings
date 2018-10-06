@@ -16,7 +16,7 @@ metadata {
 	definition (name: "Homi Gas Detector", namespace: "jrhbcn", author: "jrhbcn") {
 		
         capability "Configuration"
-        capability "Smoke Detector"
+        capability "Gas Detector"
         capability "Sensor"
         capability "Refresh"
         
@@ -34,10 +34,10 @@ metadata {
 	preferences {}
  
 	tiles(scale:2) {
-		multiAttributeTile(name:"smoke", type: "generic", width: 6, height: 4) {
-			tileAttribute ("device.smoke", key: "PRIMARY_CONTROL") {
-           		attributeState("clear", label:'clear', icon:"st.alarm.smoke.clear", backgroundColor:"#ffffff")
-            	attributeState("detected", label:'GAS', icon:"st.alarm.smoke.smoke", backgroundColor:"#e86d13")   
+		multiAttributeTile(name:"gas", type: "generic", width: 6, height: 4) {
+			tileAttribute ("device.gas", key: "PRIMARY_CONTROL") {
+           		attributeState("clear", label:'clear', icon:"st.alarm.gas.clear", backgroundColor:"#ffffff")
+            	attributeState("detected", label:'GAS', icon:"st.alarm.gas.gas", backgroundColor:"#e86d13")   
  			}
 		}
         standardTile("configure", "device.configure", inactiveLabel: false, decoration: "flat", width: 1, height: 1) {
@@ -46,8 +46,8 @@ metadata {
         standardTile("refresh", "device.refresh", inactiveLabel: false, decoration: "flat", width: 1, height: 1) {
 			state "default", action:"refresh.refresh", icon:"st.secondary.refresh"
 		}        
-		main (["smoke"])
-		details(["smoke","refresh","configure"])
+		main (["gas"])
+		details(["gas","refresh","configure"])
 	}
 }
  
@@ -115,14 +115,14 @@ private Map parseIasMessage(String description) {
     Map resultMap = [:]
     switch(msgCode) {
         case '0x0020': // Clear
-        	resultMap = getSmokeResult('clear')
+        	resultMap = getGasResult('clear')
             break
 
         case '0x0021': // ??
             break
 
-        case '0x0022': // Smoke
-        	resultMap = getSmokeResult('detected')
+        case '0x0022': // Gas
+        	resultMap = getGasResult('detected')
             break
 
         case '0x0023': // ??
@@ -144,12 +144,12 @@ private Map parseIasMessage(String description) {
 }
 
 
-private Map getSmokeResult(value) {
+private Map getGasResult(value) {
 	log.debug 'Gas Status'
 	def linkText = getLinkText(device)
 	def descriptionText = "${linkText} is ${value == 'detected' ? 'detected' : 'clear'}"
 	return [
-		name: 'smoke',
+		name: 'gas',
 		value: value,
 		descriptionText: descriptionText
 	]
